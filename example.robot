@@ -1,23 +1,30 @@
-*** Settings ***
-Library           RequestsLibrary
-
-*** Variables ***
-${AUTH_URL}    https://twittah-api.onrender.com/auth
-&{VALID_CREDENTIAL}    login=maitree    password=123456
-&{INVALID_CREDENTIAL}    login=nobody    password=123456
-
 *** Test Cases ***
-Authentication With Valid Credential
-    ${response}=    Authenticate With    &{VALID_CREDENTIAL}
-    Should Not Be Empty    ${response}[accessToken]
+Simple Arithmatic Calculation
+    ${x}=    Set Variable    ${10}
+    ${y}=    Set Variable    ${20}
+    ${z}=    Set Variable    ${${x} + ${y}}
+    Should Be Equal    ${z}    ${30}
 
-Authentication With Invalid Credential
-    ${payload}    Create Dictionary    &{INVALID_CREDENTIAL}
-    ${response}=    POST    url=${AUTH_URL}    json=${payload}    expected_status=401
+Destructuring Array
+    @{a}=    Set Variable    ant    bird    cat
+    ${animal1}    ${animal2}    ${animal3}    Set Variable    ${a}
+    Should Be Equal    ${animal1}    ant
+    Should Be Equal    ${animal2}    bird
+    Should Be Equal    ${animal3}    cat
 
-*** Keywords ***
-Authenticate With
-    [Arguments]    ${login}    ${password}
-    ${payload}    Create Dictionary    login=${login}    password=${password}
-    ${response}=    POST    url=${AUTH_URL}    json=${payload}    expected_status=200
-    RETURN    ${response.json()}
+Using VAR Syntax To Do Arithmatic Calculation
+    VAR    ${x}    ${10}
+    VAR    ${y}    ${20}
+    VAR    ${z}    ${${x} + ${y}}
+    Should Be Equal    ${z}    ${30}
+
+Accessing List Value
+    VAR    @{list}    ant    bird    cat
+    Should Be Equal    ${list}[0]    ant
+    Should Be Equal    ${list}[1]    bird
+    Should Be Equal    ${list}[2]    cat
+
+Accessing Dictionary Value
+    VAR    &{dict}    first_name=Jessie    last_name=Pinkman
+    Should Be Equal    ${dict}[first_name]    Jessie
+    Should Be Equal    ${dict}[last_name]    Pinkman
